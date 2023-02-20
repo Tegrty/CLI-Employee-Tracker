@@ -70,3 +70,314 @@ const mainMenu = () => {
 
 mainMenu();
 
+// Function to view all departments
+const viewDepartments = () => {
+    db.query(`SELECT * FROM department`, (err, result) => {
+        if (err) throw err;
+        console.table(result);
+        mainMenu();
+    })
+}
+
+// Function to view all roles
+const viewRoles = () => {
+    db.query(`SELECT * FROM role`, (err, result) => {
+        if (err) throw err;
+        console.table(result);
+        mainMenu();
+    })
+}
+
+// Function to view all employees
+const viewEmployees = () => {
+    db.query(`SELECT * FROM employee`, (err, result) => {
+        if (err) throw err;
+        console.table(result);
+        mainMenu();
+    })
+}
+
+// Function to add a department
+const addDepartment = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'department',
+            message: 'What is the name of the department you would like to add?'
+        }
+    ])
+        .then((answer) => {
+            db.query(`INSERT INTO department (name) VALUES (?)`, answer.department, (err, result) => {
+                if (err) throw err;
+                console.log(`Department added!`);
+                mainMenu();
+            })
+        })
+}
+
+// Function to add a role
+const addRole = () => {
+    db.query(`SELECT * FROM department`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'title',
+                message: 'What is the name of the role you would like to add?'
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'What is the salary of this role?'
+            },
+            {
+                type: 'list',
+                name: 'department',
+                message: 'What department does this role belong to?',
+                choices: result.map(department => department.name)
+            }
+        ])
+            .then((answer) => {
+                db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, [answer.title, answer.salary, result.find(department => department.name === answer.department).id], (err, result) => {
+                    if (err) throw err;
+                    console.log(`Role added!`);
+                    mainMenu();
+                })
+            })
+    })
+}
+
+// Function to add an employee
+const addEmployee = () => {
+    db.query(`SELECT * FROM role`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'firstName',
+                message: 'What is the first name of the employee you would like to add?'
+            },
+            {
+                type: 'input',
+                name: 'lastName',
+                message: 'What is the last name of the employee you would like to add?'
+            },
+            {
+                type: 'list',
+                name: 'role',
+                message: 'What is the role of this employee?',
+                choices: result.map(role => role.title)
+            }
+        ])
+            .then((answer) => {
+                db.query(`INSERT INTO employee (first_name, last_name, role_id) VALUES (?, ?, ?)`, [answer.firstName, answer.lastName, result.find(role => role.title === answer.role).id], (err, result) => {
+                    if (err) throw err;
+                    console.log(`Employee added!`);
+                    mainMenu();
+                })
+            })
+    })
+}
+
+// Function to update an employee's role
+const updateEmployeeRole = () => {
+    db.query(`SELECT * FROM employee`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employee',
+                message: 'Which employee would you like to update?',
+                choices: result.map(employee => `${employee.first_name} ${employee.last_name}`)
+            }
+        ])
+            .then((answer) => {
+                db.query(`SELECT * FROM role`, (err, result) => {
+                    if (err) throw err;
+                    inquirer.prompt([
+                        {
+                            type: 'list',
+                            name: 'role',
+                            message: 'What is the new role of this employee?',
+                            choices: result.map(role => role.title)
+                        }
+                    ])
+                        .then((answer) => {
+                            db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [result.find(role => role.title === answer.role).id, result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.employee).id], (err, result) => {
+                                if (err) throw err;
+                                console.log(`Employee role updated!`);
+                                mainMenu();
+                            })
+                        })
+                })
+            })
+    })
+}
+
+// Function to update an employee's manager
+const updateEmployeeManager = () => {
+    db.query(`SELECT * FROM employee`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employee',
+                message: 'Which employee would you like to update?',
+                choices: result.map(employee => `${employee.first_name} ${employee.last_name}`)
+            }
+        ])
+            .then((answer) => {
+                db.query(`SELECT * FROM employee`, (err, result) => {
+                    if (err) throw err;
+                    inquirer.prompt([
+                        {
+                            type: 'list',
+                            name: 'manager',
+                            message: 'Who is the new manager of this employee?',
+                            choices: result.map(employee => `${employee.first_name} ${employee.last_name}`)
+                        }
+                    ])
+                        .then((answer) => {
+                            db.query(`UPDATE employee SET manager_id = ? WHERE id = ?`, [result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.manager).id, result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.employee).id], (err, result) => {
+                                if (err) throw err;
+                                console.log(`Employee manager updated!`);
+                                mainMenu();
+                            })
+                        })
+                })
+            })
+    })
+}
+
+// Function to view employees by manager
+const viewEmployeesByManager = () => {
+    db.query(`SELECT * FROM employee`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'manager',
+                message: 'Which manager would you like to view employees for?',
+                choices: result.map(employee => `${employee.first_name} ${employee.last_name}`)
+            }
+        ])
+            .then((answer) => {
+                db.query(`SELECT * FROM employee WHERE manager_id = ?`, result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.manager).id, (err, result) => {
+                    if (err) throw err;
+                    console.table(result);
+                    mainMenu();
+                })
+            })
+    })
+}
+
+// Function to view employees by department
+const viewEmployeesByDepartment = () => {
+    db.query(`SELECT * FROM department`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Which department would you like to view employees for?',
+                choices: result.map(department => department.name)
+            }
+        ])
+            .then((answer) => {
+                db.query(`SELECT * FROM employee WHERE role_id IN (SELECT id FROM role WHERE department_id = ?)`, result.find(department => department.name === answer.department).id, (err, result) => {
+                    if (err) throw err;
+                    console.table(result);
+                    mainMenu();
+                })
+            })
+    })
+}
+
+
+// // Function to delete a department
+// const deleteDepartment = () => {
+//     db.query(`SELECT * FROM department`, (err, result) => {
+//         if (err) throw err;
+//         inquirer.prompt([
+//             {
+//                 type: 'list',
+//                 name: 'department',
+//                 message: 'Which department would you like to delete?',
+//                 choices: result.map(department => department.name)
+//             }
+//         ])
+//             .then((answer) => {
+//                 db.query(`DELETE FROM department WHERE id = ?`, result.find(department => department.name === answer.department).id, (err, result) => {
+//                     if (err) throw err;
+//                     console.log(`Department deleted!`);
+//                     mainMenu();
+//                 })
+//             })
+//     })
+// }
+
+// // Function to delete a role
+// const deleteRole = () => {
+//     db.query(`SELECT * FROM role`, (err, result) => {
+//         if (err) throw err;
+//         inquirer.prompt([
+//             {
+//                 type: 'list',
+//                 name: 'role',
+//                 message: 'Which role would you like to delete?',
+//                 choices: result.map(role => role.title)
+//             }
+//         ])
+//             .then((answer) => {
+//                 db.query(`DELETE FROM role WHERE id = ?`, result.find(role => role.title === answer.role).id, (err, result) => {
+//                     if (err) throw err;
+//                     console.log(`Role deleted!`);
+//                     mainMenu();
+//                 })
+//             })
+//     })
+// }
+
+// // Function to delete an employee
+// const deleteEmployee = () => {
+//     db.query(`SELECT * FROM employee`, (err, result) => {
+//         if (err) throw err;
+//         inquirer.prompt([
+//             {
+//                 type: 'list',
+//                 name: 'employee',
+//                 message: 'Which employee would you like to delete?',
+//                 choices: result.map(employee => `${employee.first_name} ${employee.last_name}`)
+//             }
+//         ])
+//             .then((answer) => {
+//                 db.query(`DELETE FROM employee WHERE id = ?`, result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.employee).id, (err, result) => {
+//                     if (err) throw err;
+//                     console.log(`Employee deleted!`);
+//                     mainMenu();
+//                 })
+//             })
+//     })
+// }
+
+// Function to view the total utilized budget of a department
+const viewTotalBudget = () => {
+    db.query(`SELECT * FROM department`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Which department would you like to view the total budget for?',
+                choices: result.map(department => department.name)
+            }
+        ])
+            .then((answer) => {
+                db.query(`SELECT SUM(salary) AS total_budget FROM role WHERE department_id = ?`, result.find(department => department.name === answer.department).id, (err, result) => {
+                    if (err) throw err;
+                    console.log(`Total budget: $${result[0].total_budget}`);
+                    mainMenu();
+                })
+            })
+    })
+}
