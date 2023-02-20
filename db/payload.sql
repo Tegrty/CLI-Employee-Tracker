@@ -20,7 +20,7 @@ VALUES
     ('Lawyer', 120000, 4),
     ('HR Lead', 130000, 5),
     ('HR Representative', 110000, 5),
-    ('The Big Cheese', 2000000, 1),
+    ('The Big Cheese', 2000000, NULL),
     ('Marketing Lead', 135000, 6),
     ('Marketing Representative', 110000, 6);
 

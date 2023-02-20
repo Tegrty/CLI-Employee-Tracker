@@ -79,14 +79,15 @@ const viewDepartments = () => {
     })
 }
 
-// Function to view all roles
+// Function to view all roles and names of departments
 const viewRoles = () => {
-    db.query(`SELECT * FROM role`, (err, result) => {
+    db.query(`SELECT role.id, role.title, role.salary, department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id`, (err, result) => {
         if (err) throw err;
         console.table(result);
         mainMenu();
     })
 }
+
 
 // Function to view all employees
 const viewEmployees = () => {
@@ -294,71 +295,71 @@ const viewEmployeesByDepartment = () => {
 }
 
 
-// // Function to delete a department
-// const deleteDepartment = () => {
-//     db.query(`SELECT * FROM department`, (err, result) => {
-//         if (err) throw err;
-//         inquirer.prompt([
-//             {
-//                 type: 'list',
-//                 name: 'department',
-//                 message: 'Which department would you like to delete?',
-//                 choices: result.map(department => department.name)
-//             }
-//         ])
-//             .then((answer) => {
-//                 db.query(`DELETE FROM department WHERE id = ?`, result.find(department => department.name === answer.department).id, (err, result) => {
-//                     if (err) throw err;
-//                     console.log(`Department deleted!`);
-//                     mainMenu();
-//                 })
-//             })
-//     })
-// }
+// Function to delete a department
+const deleteDepartment = () => {
+    db.query(`SELECT * FROM department`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Which department would you like to delete?',
+                choices: result.map(department => department.name)
+            }
+        ])
+            .then((answer) => {
+                db.query(`DELETE FROM department WHERE id = ?`, result.find(department => department.name === answer.department).id, (err, result) => {
+                    if (err) throw err;
+                    console.log(`Department deleted!`);
+                    mainMenu();
+                })
+            })
+    })
+}
 
-// // Function to delete a role
-// const deleteRole = () => {
-//     db.query(`SELECT * FROM role`, (err, result) => {
-//         if (err) throw err;
-//         inquirer.prompt([
-//             {
-//                 type: 'list',
-//                 name: 'role',
-//                 message: 'Which role would you like to delete?',
-//                 choices: result.map(role => role.title)
-//             }
-//         ])
-//             .then((answer) => {
-//                 db.query(`DELETE FROM role WHERE id = ?`, result.find(role => role.title === answer.role).id, (err, result) => {
-//                     if (err) throw err;
-//                     console.log(`Role deleted!`);
-//                     mainMenu();
-//                 })
-//             })
-//     })
-// }
+// Function to delete a role
+const deleteRole = () => {
+    db.query(`SELECT * FROM role`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'role',
+                message: 'Which role would you like to delete?',
+                choices: result.map(role => role.title)
+            }
+        ])
+            .then((answer) => {
+                db.query(`DELETE FROM role WHERE id = ?`, result.find(role => role.title === answer.role).id, (err, result) => {
+                    if (err) throw err;
+                    console.log(`Role deleted!`);
+                    mainMenu();
+                })
+            })
+    })
+}
 
-// // Function to delete an employee
-// const deleteEmployee = () => {
-//     db.query(`SELECT * FROM employee`, (err, result) => {
-//         if (err) throw err;
-//         inquirer.prompt([
-//             {
-//                 type: 'list',
-//                 name: 'employee',
-//                 message: 'Which employee would you like to delete?',
-//                 choices: result.map(employee => `${employee.first_name} ${employee.last_name}`)
-//             }
-//         ])
-//             .then((answer) => {
-//                 db.query(`DELETE FROM employee WHERE id = ?`, result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.employee).id, (err, result) => {
-//                     if (err) throw err;
-//                     console.log(`Employee deleted!`);
-//                     mainMenu();
-//                 })
-//             })
-//     })
-// }
+// Function to delete an employee
+const deleteEmployee = () => {
+    db.query(`SELECT * FROM employee`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employee',
+                message: 'Which employee would you like to delete?',
+                choices: result.map(employee => `${employee.first_name} ${employee.last_name}`)
+            }
+        ])
+            .then((answer) => {
+                db.query(`DELETE FROM employee WHERE id = ?`, result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.employee).id, (err, result) => {
+                    if (err) throw err;
+                    console.log(`Employee deleted!`);
+                    mainMenu();
+                })
+            })
+    })
+}
 
 // Function to view the total utilized budget of a department
 const viewTotalBudget = () => {
