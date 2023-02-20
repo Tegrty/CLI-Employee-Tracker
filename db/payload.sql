@@ -20,23 +20,22 @@ VALUES
     ('Lawyer', 120000, 4),
     ('HR Lead', 130000, 5),
     ('HR Representative', 110000, 5),
-    ('The Big Cheese', 2000000,)
+    ('The Big Cheese', 2000000, 1),
     ('Marketing Lead', 135000, 6),
     ('Marketing Representative', 110000, 6);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
-    ('Vasily', 'Likhovaydo', 1, 10),
-    ('Lee', 'Zhang', 2, 1),
-    ('Mark', 'Alfano', 3, 10),
-    ('Michael', 'Frayne', 4, 3),
-    ('Kirk', 'Hagglund', 5, 10),
-    ('Taddeo', 'Costanzo', 6, 10),
-    ('Rebecca', 'Lawrence' 7, 6),
-    ('Mozhdeh' 'Khorashahi', 8, 10),
-    ('Wing', NULL, 9, 8),
     ('Sal', 'Hobbi', 10, NULL),
-    ('Mariah', 'Feser', 11, 10),
+    ('Vasily', 'Likhovaydo', 1, 1),
+    ('Lee', 'Zhang', 2, 2),
+    ('Mark', 'Alfano', 3, 1),
+    ('Michael', 'Frayne', 4, 4),
+    ('Kirk', 'Hagglund', 5, 1),
+    ('Taddeo', 'Costanzo', 6, 1),
+    ('Rebecca', 'Lawrence', 7, 7),
+    ('Mozhdeh', 'Khorashahi', 8, 1),
+    ('Wing', NULL, 9, 9),
+    ('Mariah', 'Feser', 11, 1),
     ('John', 'Abounassar', 12, 11);
 
-    
