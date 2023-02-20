@@ -235,26 +235,19 @@ const updateEmployeeManager = () => {
                 name: 'employee',
                 message: 'Which employee would you like to update?',
                 choices: result.map(employee => `${employee.first_name} ${employee.last_name}`)
+            },
+            {
+                type: 'list',
+                name: 'manager',
+                message: 'Who is the new manager of this employee?',
+                choices: result.map(employee => `${employee.first_name} ${employee.last_name}`)
             }
         ])
             .then((answer) => {
-                db.query(`SELECT * FROM employee`, (err, result) => {
+                db.query(`UPDATE employee SET manager_id = ? WHERE id = ?`, [result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.manager).id, result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.employee).id], (err, result) => {
                     if (err) throw err;
-                    inquirer.prompt([
-                        {
-                            type: 'list',
-                            name: 'manager',
-                            message: 'Who is the new manager of this employee?',
-                            choices: result.map(employee => `${employee.first_name} ${employee.last_name}`)
-                        }
-                    ])
-                        .then((answer) => {
-                            db.query(`UPDATE employee SET manager_id = ? WHERE id = ?`, [result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.manager).id, result.find(employee => `${employee.first_name} ${employee.last_name}` === answer.employee).id], (err, result) => {
-                                if (err) throw err;
-                                console.log(`Employee manager updated!`);
-                                mainMenu();
-                            })
-                        })
+                    console.log(`Employee updated!`);
+                    mainMenu();
                 })
             })
     })
