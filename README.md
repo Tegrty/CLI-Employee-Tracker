@@ -1,4 +1,4 @@
-# Content-Management-System
+# CLI Employee Tracker
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=9675FF&multiline=true&width=435&height=70&lines=Vandelay+Industries;+Employee+Tracker)](https://git.io/typing-svg)
 
