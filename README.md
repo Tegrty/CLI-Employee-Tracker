@@ -19,6 +19,7 @@ This is a command-line application that allows the user to easily manage a compa
 7. Terminal: `quit` to exit MySQL.
 8. Terminal: `node index.js` to start the application.
 
+> Walkthrough ![Video](https://drive.google.com/file/d/1oTu7LqyvuLeAaF06zeTTTm9p0erH8djp/view?usp=share_link)
 ## Technologies Used 🛠️
 
 * JavaScript
